@@ -1,0 +1,74 @@
+
+{% assign all_list_product = product.metafields.custom.select_the_products_to_set_includes_.value %}
+
+{% if all_list_product != blank %}
+<div class="set_include_container">
+<ul class="product_label-bar" ></ul>
+  {% if section.settings.heading != blank %}
+      <h2>{{ section.settings.heading }}</h2>
+  {% endif %}
+  
+  <div class="set_include_wrapper">
+
+        {% for metafields_product in all_list_product %}
+          <div class="set_include_product" data-variant-id="{{ metafields_product.first_available_variant.id }}">
+              
+              <div class="product_set_image">
+                  <img src="{{ metafields_product.featured_image | img_url:"small" }}">
+              </div>
+              <div class="set_prd_information">
+                  <h3>{{ metafields_product.title }}</h3>
+                  <div class="set_inlude_prd_qty">
+                    <label>QTY:</label>
+                    <div class="quantity_buttons">
+                      <button class="quantity_btn minus_btn disabled" data-symbol="-">-</button>
+                      <input class="quantity_value" value="1">
+                      <button class="quantity_btn plus_btn" data-symbol="+">+</button>
+                    </div>
+                  </div>
+              </div>
+              <div class="set_prd_price">
+                  <span>{{ metafields_product.price | money }}</span>
+              </div>
+              <button class="extra_product hidden">ADD</button>
+          </div>
+        {% endfor %}
+    
+  </div>
+
+</div>
+{% endif %}
+
+<script>
+
+  $(document).ready(function(){
+
+    
+    
+  });
+  
+</script>
+
+{% schema %}
+  {
+    "name": "Set Include Products",
+    "settings": [
+      {
+          "type":"text",
+          "id":"heading",
+          "label":"Heading"
+      }
+    ],
+    "presets":[
+      {
+          "name":"Set Include Products"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
