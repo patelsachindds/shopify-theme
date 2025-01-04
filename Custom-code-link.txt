@@ -20,3 +20,20 @@ https://help.shopify.com/en/manual/payments/shopify-payments/multi-currency
 
 Subscription pop-up
 https://alanryan.dev/tips/customized-subscribe-modal-popup/
+
+
+Laravel make Public APP
+https://www.youtube.com/watch?v=C-BaGxwNJMU
+
+PHP  make Public APP
+https://www.shopify.com/in/partners/blog/17056443-how-to-generate-a-shopify-api-token
+https://weeklyhow.com/how-to-display-shopify-products-with-php/
+
+https://www.youtube.com/watch?v=Gtr78hfRkyM
+https://www.youtube.com/watch?v=nhJY7Q8Mzdk
+https://www.youtube.com/watch?v=f2mQiULUm1o
+
+https://stackoverflow.com/questions/60755716/how-can-i-create-an-app-from-my-local-system-website-setup-and-deploy-the-files
+
+
+
