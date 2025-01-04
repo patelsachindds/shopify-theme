@@ -1,0 +1,22 @@
+
+
+Bundle Code
+https://ecomexperts.io/blogs/liquid-tutorial-shopify/product-bundles
+
+Count down code
+https://ecomexperts.io/blogs/liquid-tutorial-shopify/how-to-add-sale-countdown-timer-to-your-shopify-store
+
+AUTO ADD Product ...
+https://speed-ecom.com/how-to-automatically-add-a-product-to-the-cart-on-your-shopify-store/
+
+
+Wishlist custom code Link:
+https://codeasashu.github.io/how-to-add-wishlist-to-shopify/
+
+https://github.com/dlerm/shopify-wishlist
+
+Multicurrency 
+https://help.shopify.com/en/manual/payments/shopify-payments/multi-currency
+
+Subscription pop-up
+https://alanryan.dev/tips/customized-subscribe-modal-popup/
