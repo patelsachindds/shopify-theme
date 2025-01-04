@@ -1,0 +1,337 @@
+{{ 'shopify-money-format.js' | asset_url | script_tag }}
+
+<div id="mySidenav" class="sidenav">
+   <div class="side_bar_nav">
+     <span class="total_cart_item">my bag <span>(<span></span> items)</span></span>
+  <a href="javascript:void(0)" class="closebtn">&times;</a>
+     </div>
+  <form action="{{ routes.cart_url }}" id="cartdrawer" method="post" novalidate class="cart cartaction">
+
+    <div class="cart_items">
+
+    </div>
+
+    {% include 'cart-drawer-featured-collection' %}
+
+    <div class="cart__footer">
+      <div class="grid">
+        {%- if section.settings.cart_notes_enable -%}
+        <div class="grid__item medium-up--one-half cart-note">
+          <label for="CartSpecialInstructions" class="cart-note__label small--text-center">{{ 'cart.general.note' | t }}</label>
+          <textarea name="note" id="CartSpecialInstructions" class="cart-note__input" data-cart-notes>{{ cart.note }}</textarea>
+        </div>
+        {%- endif -%}
+        <div class="grid__item text-right small--text-center{% if section.settings.cart_notes_enable %} medium-up--one-half{% endif %}">
+
+          {% comment %}
+          {%- assign cartDiscounts = 'template ' | split: ' ' -%}
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- assign cartDiscounts = cart.cart_level_discount_applications -%}
+          {%- endif -%}
+          <div{% if cart.cart_level_discount_applications.size == 0 %} class="hide"{% endif %} data-cart-discount-wrapper>
+            <div class="order-discount-card-wrapper" data-cart-discount>
+              {%- for discount_application in cartDiscounts -%}
+              <span class="order-discount order-discount--title order-discount--cart">
+                {% include 'icon-saletag' %}<span class="visually-hidden">{{ 'customer.order.discount' | t }}:</span><span data-cart-discount-title>{{- discount_application.title -}}</span>
+              </span>
+              <span class="order-discount order-discount--cart order-discount--cart-total">
+                -<span data-cart-discount-amount>{{ discount_application.total_allocated_amount | money }}</span>
+              </span>
+              {%- endfor -%}
+            </div>
+          </div>
+          {% endcomment %}
+
+          <div class="cart-subtotal cart_drawer_total_price">
+            <span class="cart-subtotal__title">{{ 'cart.general.subtotal' | t }}</span>
+            <span class="cart-subtotal__price" data-cart-subtotal><span class="csapps-cart-original-total">{{ cart.total_price | money }}</span></span>
+          </div>
+
+          {%- capture taxes_shipping_checkout -%}
+          {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+          {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- elsif cart.taxes_included -%}
+          {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+          {%- elsif shop.shipping_policy.body != blank -%}
+          {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+          {%- else -%}
+          {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+          {%- endif -%}
+          {%- endcapture -%}
+          {% comment %}
+          <div class="cart__shipping rte cart_drawer_shipping_text">{{ taxes_shipping_checkout }}</div>
+
+          {% endcomment %}
+          <div class="cart__buttons-container">
+          
+            <div class="cart__submit-controls cart_drawer_checkout">
+              <a href="/cart/checkout">
+                <input type="submit" name="checkout" class="cart__submit btn-sm animated-btn thar-threee" value="{{ 'cart.general.checkout' | t }}">
+              </a>
+              
+            </div>
+
+            <div class="cart__error-message-wrapper hide error_hide" role="alert" data-cart-error-message-wrapper>
+              <span class="visually-hidden">{{ 'general.accessibility.error' | t }} </span>
+              {% include 'icon-error' %}
+              <span class="cart__error-message" data-cart-error-message></span>
+            </div>
+
+            {%- if additional_checkout_buttons -%}
+            <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
+            {%- endif -%}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+ 
+  <script>
+    
+    
+    $(document).on('click','.openNav',function(){
+
+      if( screen.width <= 767 ) 
+      {
+       
+          $('.cart_drawer').removeClass('hide_cart_drawer');
+          $('.cart_drawer').addClass('active_drawer');
+      }
+      else
+      {
+        console.log('bbb');
+//         $('#mySidenav').css('width','30%');
+      	$('.cart_drawer').removeClass('hide_cart_drawer');
+      	$('.cart_drawer').addClass('active_drawer');
+      }
+    })
+    
+    $(document).on('click','.main_add_cart_button',function(e){
+    
+      console.log('click');
+        $('.cart_drawer').addClass('active_drawer');
+        $('.cart_drawer').removeClass('hide_cart_drawer');
+      
+    });
+    
+    $(document).on('click','.closebtn',function(){
+      if( screen.width <= 767 ) 
+      {
+      
+          $('.cart_drawer').addClass('hide_cart_drawer');
+          $('.cart_drawer').removeClass('active_drawer');
+      }
+      else
+      {
+//         $('#mySidenav').css('width','0');
+        $('.cart_drawer').addClass('hide_cart_drawer');
+        $('.cart_drawer').removeClass('active_drawer');
+      }
+    });
+
+    $(document).ready(function(){
+      
+      function cart(){
+        $.ajax({
+          type: 'GET',
+          url: '/cart.js',
+          dataType: 'json',
+          success: function(data) { 
+            
+            var item_count = data['item_count'];
+            
+            $('.total_cart_item span span').text(item_count);
+            $('.cart_items ').html('');
+            for(var i=0;i<data['items'].length;i++){
+
+              var item_id = data['items'][i]['id'];
+              var product_title = data['items'][i]['product_title'];
+              var product_handle = data['items'][i]['handle'];
+              var quantity = data['items'][i]['quantity'];
+			  var line_price = Shopify.formatMoney(data['items'][i]['price']).replace('$','');
+              
+              var url = data['items'][i]['url'];
+              var image_url = data['items'][i]['image'];
+
+              var default_title = data['items'][i]['product_has_only_default_variant'];
+              var variant_option;
+              
+              if(default_title == true)
+              {
+              		variant_option="";
+              }
+              else
+              {
+                var variants = data['items'][i]['variant_options'];
+              	variant_option = '<p class="cart_drawer_variant">size:'+variants+'</p>'
+              }
+             
+              $('.cart_items').append('<div class="cart_drawer_items"><div class="cart_drawer_image"><img src='+image_url+'></div><div class="cart_drawer_product_info"><div class="cart_drawer_product_title"><a href="'+url+'" class="cart_prd_heading">'+product_title+'</a><a class="remove" data-id="'+item_id+'">x</a></div>'+variant_option+'<p class="cart_drawer_price"><span class="money">₱'+line_price+'</span></p><div class="cart_drawer_quantity"><div class="cart__qty">'+'<button class="quantity-button qplus" role="button" type="button" data-variant="' + item_id + '"><i class="fal fa-plus"></i></button>'+'<input class="quantity-input" type="number" disabled name="updates[]" data-id="'+item_id+'" id="updates_' + item_id + '" value="' + quantity + '" min="1" />'+'<button class="quantity-button qminus" role="button" type="button" data-variant='+item_id+'><i class="fal fa-minus"></i></button></div></div></div>');
+
+            }
+
+            var price = Shopify.formatMoney(data['total_price']).replace('$','');
+            $(".cart-subtotal__price .money").text('₱'+price);
+          }
+
+        });
+      }
+      
+
+      $(document).on('click','.main_add_cart_button',function(e){
+        
+        var id = $('.selected_variant_id').val();
+        console.log(id);
+
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          dataType: 'json',
+          data: {
+            id:id,
+            quantity:1
+          },
+          success: function(data) { 
+           	cart();
+          }
+        });
+        
+      });
+      
+      $(document).on('click','.product_variant_button, .cart_button_collection',function(e){
+
+        console.log('click');
+        var id = $(this).attr('data-variant-id');
+
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          dataType: 'json',
+          data: {
+            id:id,
+            quantity:1
+          },
+          success: function(data) { 
+           	cart();
+          }
+        });
+      });
+
+      $('.site-header__icon').click(function(){
+        cart();
+      });
+
+      $(document).on('click','.remove',function(){
+
+        var line= $(this).attr('data-id');
+        var qty=0;
+        var element = $(this);
+        $.ajax({
+          url: "/cart/change.js",
+          data: {
+            id:line,
+            quantity:qty,
+          },
+          dataType: 'json',
+          type: "POST",
+          success: function(data){
+            
+            var item_count = data['item_count'];
+            $('.total_cart_item span span').text(item_count);
+
+            var final_price = Shopify.formatMoney(data['total_price']).replace('$','');
+            element.parents('.cart_drawer_items').remove();
+            $(".cart-subtotal__price .money").text('₱'+final_price);
+            total_price = data['total_price'];
+            cartcal(total_price);
+          }
+        });
+      });
+
+      
+      
+      $(document).on('click','.cart_drawer_quantity .quantity-button.qminus',function(){
+        
+        if($(this).prev().val() > 1) 
+        {
+          $(this).prev().val(+$(this).prev().val() - 1);
+        }
+        var qty = $(this).prev().val();
+        var id = $(this).attr('data-variant');
+        
+        $.ajax({
+          type: 'POST',
+          url: '/cart/change.js',
+          dataType: 'json',
+          data: {
+            quantity:qty,
+            id:id
+          },
+          success: function(res) { 
+           
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: '/cart.json',
+                success: function(cart){
+                  
+                  var item_count = cart['item_count'];
+                  var total_price = Shopify.formatMoney(cart['total_price']).replace('$','');
+				
+                    if ( item_count > 0 ) 
+                    {
+                        $('.total_cart_item span span').text(item_count);
+                        $(".cart-subtotal__price .money").text('₱'+total_price);
+                    }
+                }
+            });
+          }
+        });
+      });
+      
+      $(document).on('click','.cart_drawer_quantity .quantity-button.qplus',function(){
+                
+        $(this).next().val(+$(this).next().val()+1);
+        var qty = $(this).next().val();
+        var id = $(this).attr('data-variant');
+
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          dataType: 'json',
+          data: {
+            id:id,
+            quantity:1
+          },
+          success: function(res) { 
+
+            $.ajax({
+            
+                type: 'GET',
+                dataType: 'json',
+                url: '/cart.json',
+                success: function(cart){
+                  
+                  var item_count = cart['item_count'];
+                  var total_price = Shopify.formatMoney(cart['total_price']).replace('$','');
+                  
+                    if ( item_count > 0 ) 
+                    {
+                        $('.total_cart_item span span').text(item_count);
+                        $(".cart-subtotal__price .money").text('₱'+total_price);
+                    }
+                }
+            });
+          }
+        });
+      });
+
+    });
+    
+</script>
+
+

@@ -1,0 +1,36 @@
+  <div class="cart_recommendation">
+            <h2>CUSTOMERS ALSO BOUGHT</h2>
+            {% assign productsInCart = cart.items | map: 'product_id' %}
+
+               {%- for item in cart.items -%}
+                 
+                  {% assign item_prd_title = item.title | split: " " | first %}
+
+                  {% assign collection_handle = "all" %}
+                  {% assign prod_index  = 1 %}
+                     <div class="main_cart_recommendation">
+            
+                    {% for recommendations_prd in collections[collection_handle].products %}
+                   
+                          {% if recommendations_prd.title contains item_prd_title %}
+    
+                              {%  if prod_index <= 2 %}
+                                
+                              {% unless productsInCart == recommendations_prd.id %}
+                                <div class="cart_recommendation_items">
+                                  <a href="{{ recommendations_prd.url }}">
+                                    <img src="{{ recommendations_prd.featured_image | img_url:"small" }}">
+                                    <p>{{ recommendations_prd.title }}</p>
+                                  </a>
+                                </div>
+                              {% endunless %}
+                                    
+                                {% endif %}
+                            {% assign  prod_index = prod_index | plus:1 %}
+                                
+                          {% endif %}
+                  {% endfor %}
+                  </div>
+                {%- endfor -%}
+
+          </div>
