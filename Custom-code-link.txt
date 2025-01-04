@@ -36,4 +36,17 @@ https://www.youtube.com/watch?v=f2mQiULUm1o
 https://stackoverflow.com/questions/60755716/how-can-i-create-an-app-from-my-local-system-website-setup-and-deploy-the-files
 
 
+Local public APP create doc file.
+https://stackoverflow.com/questions/42777689/shopify-public-app-development-from-local-development-environment-deployment-in
+
+Install APP doc file code link:
+https://github.com/nyalex/shopify-generating-api-token-guide
+
+https://www.youtube.com/watch?v=gq6-ekVzWvQ
+
+=====================
+
+https://github.com/librespeed/speedtest
+
+
 
