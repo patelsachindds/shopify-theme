@@ -1,0 +1,63 @@
+
+settings_schema.json File,
+
+"name": "Cart",
+"settings":[
+	{
+	"type": "checkbox",
+	"id": "terms_condition",
+	"label": "Enable terms and conditions checkbox"
+  },
+  {
+	"type": "url",
+	"id": "terms_condition_link",
+	"label": "Terms and conditions page"
+   }
+]
+
+
+----------------------------
+cart-template.liquid File
+
+<div class="term_condition_div">
+
+{% if settings.terms_condition %}
+
+<p class="ajaxcart__note ajaxcart__note--terms">
+<input type="checkbox" id="CartPageAgree" />
+<label for="CartPageAgree">
+  {% if settings.terms_condition_link != blank %}
+	Jeg godkender <a href="{{ settings.terms_condition_link }}" style="text-decoration: underline;">Handelsbetingelser</a>
+  {% else %}
+  {{ 'cart.general.terms' | t }}
+  {% endif %}
+</label>
+</p>
+{% endif %}
+
+</div>
+
+Also Add the Class(terms_cart__checkout) in checkout button
+
+<button type="submit" name="checkout" class="terms_cart__checkout cart-recap__checkout button button--primary button--full button--large">{{ 'cart.general.checkout' | t }}</button>
+
+
+<script>
+  $('body').on('click', '.terms_cart__checkout', function(evt) {
+    if ($('#CartPageAgree').is(':checked')) {
+    } else {
+      alert("Du skal acceptere handelsbetingelser før du kan tjekke ud.");
+      $(this).removeClass('btn--loading');
+      return false;
+    }
+  });
+</script>
+
+--------------------------------------
+
+theme.liquid File
+
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+					
+					
