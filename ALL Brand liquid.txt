@@ -1,0 +1,72 @@
+<div class="all_brand_section">
+
+  <div class="brand_wrapper">
+  {% assign alphabet_list = "#,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z" | split: ',' %}
+    <div class="alphabet_list">
+        {% for letter in alphabet_list %}
+          <span data-value="{{ letter }}">{{ letter }}</span>
+        {% endfor %}
+    </div>
+    {% for letter in alphabet_list %}
+       <div class="brands_list" data-letter="{{ letter }}">
+         <h4>{{ letter }}</h4>
+           <div class="single_brand_alphabet_list">
+              {% for vendor in shop.vendors %}
+                 {% assign first_letter = vendor | truncate: 1, "" %}
+               		{% if letter == first_letter %}
+                      {% for collection in collections %}
+                        {% if collection.title contains vendor %}
+                          <div class="brand_value" title="{{ collection.title }}">
+                            <a href="{{ shop.url }}/collections/{{ collection.handle }}">
+                            {% if collection.metafields.custom.brand_logo != blank %}
+                                <img src="{{ collection.metafields.custom.brand_logo | img_url:"master" }}">
+                            {% endif %}
+                			<span>{{ vendor }}</span>
+                            </a>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+                      
+          			{% endif %}
+              {% endfor %}
+           </div>
+       </div>
+    {% endfor %}
+      
+  </div>
+</div>
+
+<script>
+
+  $(document).ready(function(){
+
+    $('.alphabet_list span').click(function(){
+
+      var selected_letter = $(this).attr('data-value');
+      var header_height = $('.ntheader').height();
+      
+      $('html, body').animate({ scrollTop: $('.brands_list[data-letter="'+selected_letter+'"]').offset().top - (header_height - 45) }, 'slow');
+      
+    })
+    
+  })
+</script>
+{% schema %}
+  {
+    "name": "Brand Section",
+    "settings": [
+      
+    ],
+    "presets":[
+      {
+         "name":"Bran Section" 
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
